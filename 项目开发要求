@@ -1,0 +1,59 @@
+大目标 crm系统
+    - 权限
+    - stark组件
+    - crm业务
+步骤
+  第一部分 权限组件
+
+  第二部份  stark组件
+    介绍
+        stark组件， 是第一个帮助开发者快速实现数据库表的增删改查
+    目标
+        10s，中完成一张表的增删改查
+
+    前戏
+      1 django项目启动时，自定义执行某个py文件
+        django启动时，且在读取项目中路由之前执行某个py文件
+        在任意app的apps.py中的config类中定义ready方法，并调用autodiscover_modeles
+        from django.apps import AppConfig
+        from django.utils.module_loading import autodiscover_modules
+
+        class App01Config(AppConfig):
+            name = 'app01'
+
+            def ready(self):
+                autodiscover_modules('xxx')
+      在django启动时，就会去已注册的所有app的目录下找xxx.py文件，并自动导入
+
+
+      如果看到执行两次，是因为django内部自动重启导致的
+      如果需要执行两次
+            python3  manage.py runserver 8001 --noreload
+
+      提示
+        如果xxx.py 执行的代码向（某个神奇的地方）放入了一些值，之后的路由加载，可以去‘某个神奇的地方’读取到原来的设置的值
+
+
+
+
+      2 举例说明
+
+        单  一个
+
+        例 实例 对象
+
+        通过利用python模块导入的特性：在python中，如果已经倒入过的文件再次重新导入时候，python不会在解释一遍，而是选择从内存中直接将原来导入的值拿过来用，
+
+          class AdminSite(object):
+              pass
+         site = AdminSite()  # 为adminsite类创建了一个对象（实例）
+         import utils
+         print(utils.site)
+
+         import utils
+         print(utils.site)
+         - 提示：
+              如果以后存在一个单例模式的对象，可以现在此对象中放入一个值，然后在在其他的文件导入该对象，通过对象再次将值获取到。
+
+
+      3 django路由分发的本质include
